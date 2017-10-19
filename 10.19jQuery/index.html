@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="js/jquery-3.2.1.js"></script>
+</head>
+<style>
+    *{
+        margin:0;
+        padding: 0;
+        list-style: none;
+    }
+    .win{
+        width: 800px;
+        height: 400px;
+        margin: 50px auto;
+        position: relative;
+        /*overflow: hidden;*/
+    }
+    .imgBox{
+        width: 100%;
+        height: 100%;
+    }
+    ul>li{
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left:0;
+        right: 0;
+        display: none;
+        transition: all ease .5s;
+    }
+    img{
+        display: block;
+        width:100%;
+        height: 100%;
+    }
+    ul>li.active{
+        display: block;
+    }
+    .left{
+        /*控制平移*/
+        display: block;
+        transform: translateX(-100%);
+    }
+    .right{
+        display: block;
+        transform: translateX(100%);
+    }
+    div.btnR{
+        width: 35px;
+        height: 70px;
+        background: #ffffff;
+        position: absolute;
+        top: calc(50% - 35px);
+        right: 0;
+    }
+</style>
+<body>
+<div class="win">
+    <ul class="imgBox">
+        <li class="active"><img src="img/1.jpg" alt=""></li>
+        <li><img src="img/2.jpg" alt=""></li>
+        <li><img src="img/3.jpg" alt=""></li>
+        <li><img src="img/5.jpg" alt=""></li>
+    </ul>
+    <div class="btnR"></div>
+</div>
+</body>
+<script>
+    $(function () {
+        let btnR = $('.btnR');
+        btnR.on('click',function(){
+            clearInterval(time);
+            let a = $(this);
+            a.siblings().stop();
+            let next = $('.active').next();   // 下一张
+            if(next.length){
+                move(next,'left');
+            }else{
+                next = $('li').eq(0);
+                move(next,'left');
+            }
+        })
+        // 自动轮播
+        time = setInterval(function(){
+            btnR.triggerHandler('click')
+        },3000)
+        // obj 下一张      dir方向
+        function move(obj,dir) {
+            // active 当前窗口的    obj即将动画的第二张
+            let active = $('.active');
+            // 按照顺序执行使用队
+                    active.addClass(dir).delay(1000).queue(function(){
+                        $(this).removeClass(dir).removeClass('active');
+                        $(this).dequeue();
+                    })
+
+            // 右边  即下一张  正好是dir相反的类
+            let d = dir == 'left'?'right':'left';
+            obj.addClass(d);   // 放到右边
+           /* obj[0].offsetWidth; */ // 在右边渲染一下   获取宽度   作用显示一下
+            $(obj).width();
+            obj.removeClass(d).addClass('active');  // 从右边放到页面的正中间 因为时间很快所以加上一句相当于一个过渡作用
+        }
+    })
+</script>
+</html>
